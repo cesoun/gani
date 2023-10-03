@@ -3,14 +3,11 @@ package gani
 import (
 	"bufio"
 	"bytes"
-	"errors"
-	"fmt"
 	"strings"
 )
 
 // TODO: SCRIPT block(s)? [Anything else we are missing?]
 
-// TODO: Read a GANI
 // TODO: Write a GANI
 
 // Gani defines the Gani file format
@@ -29,7 +26,7 @@ func (g *Gani) Parse(b []byte) error {
 
 	// SPRITE lines
 	for scanner.Scan() {
-		if scanner.Text() == "" {
+		if strings.EqualFold(scanner.Text(), "") {
 			break
 		}
 
@@ -43,7 +40,7 @@ func (g *Gani) Parse(b []byte) error {
 
 	// Settings lines
 	for scanner.Scan() {
-		if scanner.Text() == "" {
+		if strings.EqualFold(scanner.Text(), "") {
 			break
 		}
 
@@ -58,18 +55,45 @@ func (g *Gani) Parse(b []byte) error {
 			continue
 		}
 
-		//frame := NewFrame(g.Settings.SingleDirection)
+		// Populate the Frame data
+		frame := NewFrame(g.Settings.SingleDirection)
+		for i := 0; i < 4; i++ {
+			err := frame.AppendPlacedSprites(scanner.Text(), FrameDirection(i))
+			if err != nil {
+				return err
+			}
 
-		// TODO: Nested looping for the frames.
+			if !scanner.Scan() {
+				break
+			}
 
+			// Break if we new-line or hit a wait/playsound
+			if strings.EqualFold(scanner.Text(), "") ||
+				strings.HasPrefix(scanner.Text(), "WAIT") ||
+				strings.HasPrefix(scanner.Text(), "PLAYSOUND") {
+				break
+			}
+		}
+
+		// Populate the WAIT & PLAYSOUND(s)
+		for !strings.EqualFold(scanner.Text(), "") && !strings.EqualFold(scanner.Text(), "ANIEND") {
+			if err := frame.ParseWaitOrSound(scanner.Text()); err != nil {
+				return err
+			}
+
+			if !scanner.Scan() {
+				break
+			}
+		}
+		g.Frames = append(g.Frames, frame)
+
+		// Reached the end
 		if strings.EqualFold(scanner.Text(), "ANIEND") {
 			break
 		}
-
-		fmt.Println(scanner.Text())
 	}
 
-	return errors.New("unimplemented")
+	return nil
 }
 
 // NewGani creates a new empty Gani
