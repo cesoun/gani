@@ -12,11 +12,35 @@ type Frame struct {
 	Left       []*PlacedSprite
 	Down       []*PlacedSprite
 	Right      []*PlacedSprite
-	Properties []fmt.Stringer
-	//Wait      float64
-	//PlaySound []*Sound
+	Properties []fmt.Stringer // Wait or Sound entries to maintain their order
 
 	isSingleDirection bool
+}
+
+func (f *Frame) String() string {
+	builder := strings.Builder{}
+
+	builder.WriteString(PlacedSpriteSliceToString(f.Up))
+	builder.WriteString("\n")
+
+	if !f.isSingleDirection {
+		builder.WriteString(PlacedSpriteSliceToString(f.Left))
+
+		builder.WriteString("\n")
+		builder.WriteString(PlacedSpriteSliceToString(f.Down))
+
+		builder.WriteString("\n")
+		builder.WriteString(PlacedSpriteSliceToString(f.Right))
+
+		builder.WriteString("\n")
+	}
+
+	for _, property := range f.Properties {
+		builder.WriteString(property.String())
+		builder.WriteString("\n")
+	}
+
+	return builder.String()
 }
 
 // AppendPlacedSprites attempts to append the PlacedSprite for the given FrameDirection
@@ -56,6 +80,7 @@ func (f *Frame) AppendPlacedSprites(line string, dir FrameDirection) error {
 	return nil
 }
 
+// ParseWaitOrSound attempts to parse and append a Wait or Sound to the Frame.Properties for the given line
 func (f *Frame) ParseWaitOrSound(line string) error {
 	fields := strings.Split(line, " ")
 

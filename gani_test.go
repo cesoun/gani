@@ -2,6 +2,7 @@ package gani
 
 import (
 	_ "embed"
+	"strings"
 	"testing"
 )
 
@@ -52,6 +53,12 @@ func TestGani_Parse(t *testing.T) {
 			if err := g.Parse(tt.args.bs); (err != nil) != tt.wantErr {
 				t.Errorf("Parse() with error = %v, wantErr %v", err, tt.wantErr)
 				return
+			}
+
+			// Ignore windows formatting here.
+			betterWant := strings.ReplaceAll(string(tt.args.bs), "\r\n", "\n")
+			if !strings.EqualFold(betterWant, g.String()) {
+				t.Errorf("String() mismatch:\n%q\n%q\n", betterWant, g.String())
 			}
 		})
 	}

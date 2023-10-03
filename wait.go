@@ -7,7 +7,7 @@ type Wait struct {
 }
 
 func (w *Wait) String() string {
-	return fmt.Sprintf("%d", w.Duration)
+	return fmt.Sprintf("WAIT %d", w.Duration)
 }
 
 // NewWait creates a new Wait property from the given duration

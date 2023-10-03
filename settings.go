@@ -17,6 +17,56 @@ type Settings struct {
 	DefaultBody     string
 }
 
+func (s *Settings) String() string {
+	builder := strings.Builder{}
+
+	if s.Looping {
+		builder.WriteString("LOOP")
+		builder.WriteString("\n")
+	}
+
+	if s.Continuous {
+		builder.WriteString("CONTINUOUS")
+		builder.WriteString("\n")
+	}
+
+	if s.SingleDirection {
+		builder.WriteString("SINGLEDIRECTION")
+		builder.WriteString("\n")
+	}
+
+	if !strings.EqualFold(s.SetBackTo, "") {
+		builder.WriteString(fmt.Sprintf("SETBACKTO %s", s.SetBackTo))
+		builder.WriteString("\n")
+	}
+
+	for i, param := range s.DefaultParams {
+		if !strings.EqualFold(param, "") {
+			builder.WriteString(fmt.Sprintf("DEFAULTPARAM%d %s", i+1, param))
+			builder.WriteString("\n")
+		}
+	}
+
+	for i, attr := range s.DefaultAttrs {
+		if !strings.EqualFold(attr, "") {
+			builder.WriteString(fmt.Sprintf("DEFAULTATTR%d %s", i+1, attr))
+			builder.WriteString("\n")
+		}
+	}
+
+	if !strings.EqualFold(s.DefaultHead, "") {
+		builder.WriteString(fmt.Sprintf("DEFAULTHEAD %s", s.DefaultHead))
+		builder.WriteString("\n")
+	}
+
+	if !strings.EqualFold(s.DefaultBody, "") {
+		builder.WriteString(fmt.Sprintf("DEFAULTBODY %s", s.DefaultBody))
+		builder.WriteString("\n")
+	}
+
+	return builder.String()
+}
+
 // Parse attempts to parse the given line to a Settings value
 func (s *Settings) Parse(line string) error {
 	strs := strings.Split(line, " ")

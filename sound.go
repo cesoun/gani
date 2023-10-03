@@ -1,6 +1,9 @@
 package gani
 
-import "fmt"
+import (
+	"fmt"
+	"strconv"
+)
 
 // Sound defines a Sound found in a Gani
 type Sound struct {
@@ -9,9 +12,11 @@ type Sound struct {
 }
 
 // String formats the Sound for output
-// todo: https://pkg.go.dev/strconv#FormatFloat for more accurate formatting maybe
 func (s *Sound) String() string {
-	return fmt.Sprintf("PLAYSOUND %s %.3f %.3f", s.File, s.X, s.Y)
+	x := strconv.FormatFloat(s.X, 'f', -1, 64)
+	y := strconv.FormatFloat(s.Y, 'f', -1, 64)
+
+	return fmt.Sprintf("PLAYSOUND %s %s %s", s.File, x, y)
 }
 
 // NewSound creates a new Sound from the given file, start and end times

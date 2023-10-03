@@ -19,6 +19,36 @@ type Gani struct {
 	header string
 }
 
+func (g *Gani) String() string {
+	builder := strings.Builder{}
+
+	builder.WriteString(g.header)
+	builder.WriteString("\n")
+
+	for _, sprite := range g.Sprites {
+		builder.WriteString(sprite.String())
+		builder.WriteString("\n")
+	}
+	builder.WriteString("\n")
+
+	builder.WriteString(g.Settings.String())
+	builder.WriteString("\n")
+
+	builder.WriteString("ANI\n")
+
+	for i, frame := range g.Frames {
+		builder.WriteString(frame.String())
+
+		if i != len(g.Frames)-1 {
+			builder.WriteString("\n")
+		}
+	}
+
+	builder.WriteString("ANIEND\n")
+
+	return builder.String()
+}
+
 // Parse extracts the Gani data from the incoming buffer
 func (g *Gani) Parse(b []byte) error {
 	scanner := bufio.NewScanner(bytes.NewReader(b))
