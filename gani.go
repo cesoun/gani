@@ -6,9 +6,9 @@ import (
 	"strings"
 )
 
+// Need some examples before I can really do anything w. these.
 // TODO: SCRIPT block(s)? [Anything else we are missing?]
-
-// TODO: Write a GANI
+// TODO: COLOREFFECT?
 
 // Gani defines the Gani file format
 type Gani struct {
